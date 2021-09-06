@@ -1,0 +1,31 @@
+- type: log
+  paths:
+    - /home/data/logs/*/*.json.log
+    - /home/data/logs/*/*.json.log.*
+  fields:
+    type: {% if env == 'stg' or env == 'pre' %}json{% else %}jsondaemon{% endif %}
+
+{% if appid.split("-")[0] | lower == 'risk' and env == 'prd' %}
+    topic: {{ risk_topic.jsondaemon }}
+{% elif appid.split("-")[0] | lower == 'bme' and env == 'prd' %}
+    topic: {{ bme_topic.jsondaemon }}
+{% elif env == 'stg' or env == 'pre' %}
+{% else %}
+    topic: {{ topic.jsondaemon }}
+{% endif%}
+{% if env == 'gra' %}
+    index: gra
+{% elif env == 'dev' %}
+    index: dev
+{% endif %}
+  fields_under_root: true
+  ignore_older: 5m
+  tail_files: false
+  max_bytes: 1024000
+  close_older: 30m
+  force_close_files: true
+  json.overwrite_keys: true
+  json.keys_under_root: false
+  processors:
+    - drop_fields:
+        fields: ['input','offset','prospector']

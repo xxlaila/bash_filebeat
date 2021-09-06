@@ -1,0 +1,66 @@
+---
+  - name: Create {{ project_name }} conf.d
+    file:
+      name: "/etc/{{ project_name }}/conf.d"
+      state: directory
+      mode: 0755
+    become: yes
+
+  - name: Copy {{ project_name }} configure file
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      mode: 0755
+    with_items:
+      - { src: "access.yml", dest: "/etc/{{ project_name }}/conf.d/access.yml" }
+      - { src: "json.yml", dest: "/etc/{{ project_name }}/conf.d/json.yml" }
+      - { src: "multiline.java.yml", dest: "/etc/{{ project_name }}/conf.d/multiline.java.yml" }
+      - { src: "multiline.yml", dest: "/etc/{{ project_name }}/conf.d/multiline.yml" }
+      - { src: "ops.yml", dest: "/etc/{{ project_name }}/conf.d/ops.yml" }
+      - { src: "daemon.yml", dest: "/etc/{{ project_name }}/conf.d/daemon.yml" }
+      - { src: "{{ project_name }}.yml", dest: "/etc/{{ project_name }}/{{ project_name }}.yml" }
+    become: yes
+
+  - name: Copy {{ project_name }} configure file
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      mode: 0755
+    with_items:
+      - { src: "multiline.info.yml", dest: "/etc/{{ project_name }}/conf.d/multiline.info.yml" }
+    when: appid.split("-")[0] | lower == 'risk' and env == 'prd'
+    become: yes
+
+  - name: Copy {{ project_name }} Boot Start config files
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    with_items:
+      - { src: "{{ project_name}}.service", dest: "/usr/lib/systemd/system/{{ project_name }}.service" }
+#    notify: restart filebeat
+    become: yes
+
+  - name: restart {{ project_name }}
+    systemd:
+      name: filebeat
+      enabled: yes
+      state: restarted
+      daemon_reload: yes
+    when: env != 'dev' or env != 'gra'
+    become: yes
+    ignore_errors: True
+
+#  - name: Call the flush of meta module_handlers
+#    meta: flush_handlers
+#    become: yes
+
+  - name: check {{ project_name }} boot start
+    shell: ps -ef |grep filebeat|egrep -v grep
+    register: process
+    become: yes
+    ignore_errors: True
+
+  - name: show filebeat vars
+    debug: var=process.stdout verbosity=0
+    become: yes
+    ignore_errors: True

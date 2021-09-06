@@ -1,0 +1,32 @@
+- type: log
+  paths:
+    - {{ pro_dir }}/logs/*/*.multiline.log
+    - {{ pro_dir }}/logs/*/*.multiline.log.*
+  fields:
+    type: {% if env == 'stg' or env == 'pre' %}phpdaemon{% else %}daemon{% endif %}
+
+{% if appid.split("-")[0] | lower == 'risk' and env == 'prd' %}
+    topic: {{ risk_topic.phpdaemon }}
+{% elif appid.split("-")[0] | lower == 'bme' and env == 'prd' %}
+    topic: {{ bme_topic.phpdaemon }}
+{% elif env == 'stg' or env == 'pre' %}
+{% else %}
+    topic: {{ topic.phpdaemon }}
+{% endif%}
+{% if env == 'gra' %}
+    index: gra
+{% elif env == 'dev' %}
+    index: dev
+{% endif %}
+  fields_under_root: true
+  multiline.pattern: '\$\$\$$'
+  multiline.negate: true
+  multiline.match: before
+  ignore_older: 5m
+  tail_files: false
+  max_bytes: 1024000
+  close_older: 30m
+  force_close_files: true
+  processors:
+    - drop_fields:
+        fields: ['input','offset','prospector']

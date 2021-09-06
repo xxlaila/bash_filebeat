@@ -1,0 +1,26 @@
+#- include: install.yml
+#  when: appid != ''
+#- include: oldclean.yml
+#  when: appid != ''
+- include_vars: default.yml
+
+- include_vars: dev.yml
+  when: env == 'dev'
+
+- include_vars: stg.yml
+  when: env == 'stg'
+
+- include_vars: pre.yml
+  when: env == 'pre'
+
+- include_vars: gra.yml
+  when: env == 'gra'
+
+- include_vars: prd.yml
+  when: env == 'prd'
+
+- include: install.yml
+  when: appid != '' and env == 'stg' or env == 'pre'
+
+- include: config.yml
+  when: appid != ''

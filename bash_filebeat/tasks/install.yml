@@ -1,0 +1,36 @@
+---
+  - name: Delete {{ project_name }}
+    yum:
+      name: "{{ project_name }}"
+      state: absent
+    become: yes
+
+  - name: Copy {{ project_name }} rpm
+    copy:
+      src: "{{ project_name }}-{{ version }}.rpm"
+      dest: "/tmp/{{ project_name }}-{{ version }}.rpm"
+    become: yes
+
+  - name: Yum Install {{ project_name }} package
+    yum:
+      name: "/tmp/{{ project_name }}-{{ version }}.rpm"
+      state: present
+    become: yes
+
+  - name: Delete {{ project_name }} rpm package
+    file:
+      path: "/tmp/{{ project_name }}-{{ version }}.rpm"
+      state: absent
+    become: yes
+
+  - name: Create {{ project_name }} data and logs directory
+    file:
+      name: "{{ item }}"
+      state: directory
+      owner: "{{ webuser }}"
+      group: "{{ webuser }}"
+      mode: 0755
+    with_items:
+      - "{{ path }}/{{ project_name }}/logs"
+      - "{{ path }}/{{ project_name }}/newdata"
+    become: yes

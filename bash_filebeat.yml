@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  gather_facts: no
+  strategy: free
+#  pre_tasks:
+#    - setup:
+#        gather_subset:
+#          - '!all'
+  roles:
+    - bash_filebeat

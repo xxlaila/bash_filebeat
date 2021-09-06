@@ -1,0 +1,6 @@
+---
+  project_name: filebeat
+  webuser: wwwuser
+  pro_dir: /home/data
+  path: /home/data
+  port: 9092

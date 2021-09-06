@@ -1,0 +1,30 @@
+- type: log
+  paths:
+    - {{ pro_dir }}/logs/*/*.ops.log
+    - {{ pro_dir }}/logs/*/*.ops.log.*
+  fields:
+    type: {% if env == 'stg' or env == 'pre' %}json{% else %}daemon{% endif %}
+
+{% if appid.split("-")[0] | lower == 'risk' and env == 'prd' %}
+    topic: {{ risk_topic.opsdaemon }}
+{% elif appid.split("-")[0] | lower == 'bme' and env == 'prd' %}
+    topic: {{ bme_topic.opsdaemon }}
+{% elif env == 'stg' or env == 'pre' %}
+{% else %}
+    topic: {{ topic.opsdaemon }}
+{% endif%}
+{% if env == 'gra' %}
+    index: gra
+{% elif env == 'dev' %}
+    index: dev
+{% endif %}
+  fields_under_root: true
+  ignore_older: 5m
+  json.keys_under_root: true
+  tail_files: false
+  max_bytes: 1024000
+  close_older: 30m
+  force_close_files: true
+  processors:
+    - drop_fields:
+        fields: ['input','offset','prospector']

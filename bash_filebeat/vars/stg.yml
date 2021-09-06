@@ -1,0 +1,13 @@
+---
+  version: 7.8.1-x86_64
+  port: 5044
+
+  midds_ip:
+    - logfilter-stg-01.xxlaila.cn
+    - logfilter-stg-02.xxlaila.cn
+    - logfilter-stg-03.xxlaila.cn
+
+#  stg_kfk_ip:
+#    - kfk-elk-stg-01.xxlaila.cn
+#    - kfk-elk-stg-02.xxlaila.cn
+#    - kfk-elk-stg-03.xxlaila.cn

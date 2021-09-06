@@ -1,0 +1,15 @@
+---
+  version: 6.4.0-x86_64
+
+  topic:
+    access: access
+    daemon: phpdaemon
+    jsondaemon: jsondaemon
+    javadaemon: javadaemon
+    phpdaemon: phpdaemon
+    opsdaemon: opsdaemon
+
+  midds_ip:
+    - kfk-elk-gra-01.xxlaila.cn
+    - kfk-elk-gra-02.xxlaila.cn
+    - kfk-elk-gra-03.xxlaila.cn

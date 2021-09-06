@@ -1,0 +1,37 @@
+### 输出到{% if env == 'stg' %}logstash{% else %}kafka{% endif %} ###
+output.{% if env == 'stg' or env == 'pre' %}logstash{% else %}kafka{% endif %}:
+  hosts: [{% for midd in midds_ip %}"{{ midd }}:{{ port }}"{% if not loop.last %},{% endif %}{% endfor %}]
+
+  {% if env == 'stg' or env == 'pre' %}
+
+  loadbalance: true
+  ttl: 60s
+
+  {% else %}
+
+  topic: '%{[topic]}'
+  compression: gzip
+  partition.round_robin:
+  reachable_only: false
+  required_acks: 1
+  max_message_bytes: 1000000
+  worker: 3
+  bulk_max_size: 10240
+  version: 1.1.1
+
+  {% endif %}
+### 日志配置 ####
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: {{ path }}/{{ project_name }}/logs
+  name: {{ project_name }}
+  keepfiles: 7
+  permissions: 0644
+### 采集配置导入 ####
+filebeat.config.inputs:
+  enabled: true
+  path: conf.d/*.yml
+max_procs: 1
+#queue.mem.events: 512
+#queue.mem.flush.min_events: 256

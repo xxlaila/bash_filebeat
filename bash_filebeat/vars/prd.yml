@@ -1,0 +1,31 @@
+---
+  version: 6.4.0-x86_64
+
+  topic:
+    access: access
+    daemon: phpdaemon
+    jsondaemon: jsondaemon
+    javadaemon: javadaemon
+    phpdaemon: phpdaemon
+    opsdaemon: opsdaemon
+
+  risk_topic:
+    access: access
+    daemon: risk-phpdaemon
+    jsondaemon: jsondaemon
+    javadaemon: risk-javadaemon
+    phpdaemon: risk-phpdaemon
+    opsdaemon: opsdaemon
+
+  bme_topic:
+    access: access
+    daemon: bme-phpdaemon
+    jsondaemon: jsondaemon
+    javadaemon: bme-javadaemon
+    phpdaemon: bme-phpdaemon
+    opsdaemon: opsdaemon
+
+  midds_ip:
+    - kfk-elk-01.xxlaila.cn
+    - kfk-elk-02.xxlaila.cn
+    - kfk-elk-03.xxlaila.cn
